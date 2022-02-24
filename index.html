@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html class="no-js">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="statics/css/bootstrap.css">
+    <link rel="stylesheet" href="statics/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="statics/css/main.css">
+
+    <script>
+        const {
+            ipcRenderer
+        } = require('electron');
+        ipcRenderer.send('connect', 'kwlee');
+        ipcRenderer.on('welcome', function (event, data) {
+            console.log('hello' + data)
+        });
+    </script>
+</head>
+
+<body>
+        <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #123456">
+            <a class="navbar-brand" href="#">G+FLAS LIFE SCIENCES : CRISPR gRNA Design Tool</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+    
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item" style="margin-left: 1000px">
+                        <a class="nav-link" data-toggle="modal" data-target="#about" id="navbarDropdownMenuLink1" style="cursor:pointer;">About</a>
+                    </li>
+                    <li class="nav-item" style="margin-left: 10px">
+                        <a class="nav-link" data-toggle="modal" data-target="#help" id="navbarDropdownMenuLink2" style="cursor:pointer;">Help</a>
+                    </li>
+                    <li class="nav-item" style="margin-left: 10px">
+                        <a class="nav-link" data-toggle="modal" data-target="#issue" id="navbarDropdownMenuLink3" style="cursor:pointer;">Report</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+    <div class="container-fluid row title">
+        <div class="col border-radius" style="text-align: center">
+            <a href="#"><strong>Select load file type</strong></a>
+        </div>
+        <!-- <canvas id="myCanvas1"></canvas> -->
+    </div>
+
+    <div class="container file-type" style="text-align: center">
+        <div class="row">
+            <div class="col border-radius" style="padding: 4px;">
+                <a id="genbank_option" style="color: #c3325f; cursor:pointer;"><span
+                        class="fa fa-file-text"></span>Genbank</a>
+            </div>
+
+            <div class="col border-radius" style="padding: 4px">
+                <a id="snapgene_option" style="cursor:pointer;"><span class="fa fa-file-text"></span>SnapGene</a>
+            </div>
+
+            <div class="col border-radius" style="padding: 4px">
+                <a id="fasta_option" style="cursor:pointer;"><span class="fa fa-file-text"></span>Fasta(sequence)</a>
+            </div>
+        </div>
+    </div>
+
+    <!--genbank_content-->
+    <div class="container" id="genbank_content" style=" padding: 15px 15px">
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Upload</span>
+            </div>
+            <div class="custom-file">
+                <label class="custom-file-label" id="gb_file_label" for="gb_file">Load Genbank file</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="snapgene_content" style=" padding: 15px 15px; display: none">
+        <!-- snapgene_content -->
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Upload</span>
+            </div>
+            <div class="custom-file">
+                <label class="custom-file-label" id="sg_file_label" for="sg_file">Load SnapGene file</label>
+            </div>
+        </div>
+    </div>
+
+    <!--fasta_content-->
+    <div class="container" id="fasta_content" style=" padding: 15px 15px; display: none">
+
+        <div style="margin-top: 10px">
+            <p><strong>Note:</strong>Enter DNA FASTA files or sequences.</p>
+            <label><strong>Enter DNA sequences or FASTA file</strong></label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">DNA Sequence</span>
+                </div>
+                <textarea class="form-control" aria-label="With textarea" id="dna_sequence" rows="4" name="QUERY"
+                    onkeyup="value = value.replace(/(>.+\n)/g,'').replace(/[^ATCGatcg]/g,'')"></textarea>
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">or, upload file</span>
+                </div>
+                <div class="custom-file">
+                    <label class="custom-file-label" id="dna_file_label" for="dna_file">DNA Fasta file</label>
+                    <input class="custom-file-input" id="dna_file" type="file" style="display: inline" onchange="read_dna_fa()" />
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="container-fluid row title">
+        <div class="col border-radius" style="text-align: center">
+            <a href="#"><strong>Edit System option</strong></a>
+        </div>
+        <!-- <canvas id="myCanvas2"></canvas> -->
+    </div>
+
+
+    <div class="container" id="edit_content" style=" padding: 15px 15px">
+
+        <div class="input-group mb-3" style="margin-top: 10px">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="Cas_protein">CRISPR-Cas protein<span  class="fa fa-question-circle-o" style="color: #027BFF; padding-left: 5px; cursor:pointer" data-toggle="tooltip" data-html="true" title="Select the 'CRISPR/Cas9 or CRISPR/Cas12a'. Once selected, the parameters 'PAM' and gRNA length will be filled in automatically, not required."></span></label>
+            </div>
+            <select class="custom-select" id="Cas_protein" onchange="change_Cas_protein()">
+                <option value="" style="display: none"></option>
+                <option value="spCas9(NGG)">spCas9(NGG)</option>
+                <option value="AsCas12a(TTTN)">AsCas12a(TTTN)</option>
+            </select>
+        </div>
+
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="PAM">PAM<span style="color: red;font-weight:bold">*</span><span  class="fa fa-question-circle-o" style="color: #027BFF; padding-left: 5px; cursor:pointer" data-toggle="tooltip" data-html="true" title="The default value is NGG, which can be customized, required.">
+                </span></label>
+            </div>
+            <input id="PAM" type="text" class="form-control" aria-label="Default"
+                aria-describedby="inputGroup-sizing-default" value="NGG">
+        </div>
+
+        <!-- <div class="input-group mb-3" style="margin-top: 10px">
+            <div class="input-group-prepend">
+                <label class="input-group-text">Edit window <span style="color: red;font-weight:bold">*</span><span  class="fa fa-question-circle-o" style="color: #027BFF; padding-left: 5px; cursor:pointer" data-toggle="tooltip" data-html="true" title="The default values are 1 and 20 (The farthest first base of PAM is represented as a 1), which can be
+                    customized, required.">
+                    </span></label>
+            </div>
+            <input type="text" id="Edit_window_start" class="form-control" value="1">
+            <input type="text" id="Edit_window_end" class="form-control" value="20">
+        </div> -->
+
+        <!-- <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="gRNA_length">gRNA length <span
+                        style="color: red;font-weight:bold">*</span><span  class="fa fa-question-circle-o" style="color: #027BFF; padding-left: 5px; cursor:pointer" data-toggle="tooltip" data-html="true" title="The default value is 20, which can be customized, required.">
+                        </span></label>
+            </div>
+            <input id="gRNA_length" type="text" class="form-control" aria-label="Default"
+                aria-describedby="inputGroup-sizing-default"
+                onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+                onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" value="20">
+        </div> -->
+
+
+        <!-- <div class="input-group mb-3" style="Find"> -->
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="offtarget">Select reference genome<span  class="fa fa-question-circle-o" style="color: #027BFF; padding-left: 5px; cursor:pointer" data-toggle="tooltip" data-html="true" title="Select reference genome."></span></label>
+            </div>
+            <select class="custom-select" id="offtarget">
+                <option value="" style="display: none"></option>
+                <!--                    <option value="os_cas9_ngg_20_offtarget_info.json">Oryza_sativa cas9 NGG 20</option>-->
+            </select>
+        </div>
+
+        <!-- <div class="input-group mb-3" style="margin-top: 10px">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="download">Download offtarget DataBase<span  class="fa fa-question-circle-o" style="color: #027BFF; padding-left: 5px; cursor:pointer" data-toggle="tooltip" data-html="true" title="Download CRISPR-BETS off-target data.">
+                </span></label>
+            </div>
+            <select class="custom-select" id="download">
+                <option value="" style="display: none"></option>
+                <option value="tigr7_20_NGG_ETScodon_gRNA_m3_offtarget.json">Oryza sativa japonica(MSU7) NGG offtarget
+                    database</option>
+                <option value="tigr7_20_NGA_ETScodon_gRNA_m3_offtarget.json">Oryza sativa japonica(MSU7) NGA offtarget
+                    database</option>
+                <option value="tigr7_20_NAAR_ETScodon_gRNA_m3_offtarget.json">Oryza sativa japonica(MSU7) NAAR offtarget
+                    database</option>
+                <option value="tigr7_20_NGGNG_ETScodon_gRNA_m3_offtarget.json">Oryza sativa japonica(MSU7) NGGNG
+                    offtarget database</option>
+                <option value="tigr7_20_NNAGAAW_ETScodon_gRNA_m3_offtarget.json">Oryza sativa japonica(MSU7) NNAGAAW
+                    offtarget database</option>
+                <option value="tigr7_20_NNNNGATT_ETScodon_gRNA_m3_offtarget.json">Oryza sativa japonica(MSU7) NNNNGATT
+                    offtarget database</option>
+                <option value="tigr7_20_YG_ETScodon_gRNA_m3_offtarget.json">Oryza sativa japonica(MSU7) YG offtarget
+                    database</option>
+
+                <option value="tair10_20_NGG_ETScodon_gRNA_m3_offtarget.json">Arabidopsis thaliana(tair10) NGG offtarget
+                    database</option>
+                <option value="tair10_20_NGA_ETScodon_gRNA_m3_offtarget.json">Arabidopsis thaliana(tair10) NGA offtarget
+                    database</option>
+                <option value="tair10_20_NAAR_ETScodon_gRNA_m3_offtarget.json">Arabidopsis thaliana(tair10) NAAR
+                    offtarget database</option>
+                <option value="tair10_20_NGGNG_ETScodon_gRNA_m3_offtarget.json">Arabidopsis thaliana(tair10) NGGNG
+                    offtarget database</option>
+                <option value="tair10_20_NNAGAAW_ETScodon_gRNA_m3_offtarget.json">Arabidopsis thaliana(tair10) NNAGAAW
+                    offtarget database</option>
+                <option value="tair10_20_NNG_ETScodon_gRNA_m3_offtarget.json">Arabidopsis thaliana(tair10) NNG offtarget
+                    database</option>
+                <option value="tair10_20_NNNNGATT_ETScodon_gRNA_m3_offtarget.json">Arabidopsis thaliana(tair10) NNNNGATT
+                    offtarget database</option>
+                <option value="tair10_20_NR_ETScodon_gRNA_m3_offtarget.json">Arabidopsis thaliana(tair10) NR offtarget
+                    database</option>
+                <option value="tair10_20_YG_ETScodon_gRNA_m3_offtarget.json">Arabidopsis thaliana(tair10) YG offtarget
+                    database</option>
+
+                <option value="RefGen_v4_20_NGG_ETScodon_gRNA_m3_offtarget.json">Zea mays(RefGen_v4) NGG offtarget
+                    database</option>
+                <option value="RefGen_v4_20_NGA_ETScodon_gRNA_m3_offtarget.json">Zea mays (RefGen_v4) NGA offtarget
+                    database</option>
+                <option value="RefGen_v4_20_NAAR_ETScodon_gRNA_m3_offtarget.json">Zea mays (RefGen_v4) NAAR offtarget
+                    database</option>
+                <option value="RefGen_v4_20_NGGNG_ETScodon_gRNA_m3_offtarget.json">Zea mays (RefGen_v4) NGGNG offtarget
+                    database</option>
+                <option value="RefGen_v4_20_NNAGAAW_ETScodon_gRNA_m3_offtarget.json">Zea mays (RefGen_v4) NNAGAAW
+                    offtarget database</option>
+                <option value="RefGen_v4_20_NNNNGATT_ETScodon_gRNA_m3_offtarget.json">Zea mays (RefGen_v4) NNNNGATT
+                    offtarget database</option>
+
+            </select>
+
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary " type="button" id="download_btn"
+                    onclick="download_offtarget_info()"><span class="fa fa-download"></span>Download <span
+                        class="fa fa-refresh fa-spin" id="download_refresh"
+                        style="margin-left: 5px; display: none"></span></button>
+            </div>
+        </div> -->
+
+        <div class="progress progress-striped active download_info">
+            <div id="download_progress" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow=""
+                aria-valuemin="0" aria-valuemax="100" style="width:0"></div>
+        </div>
+
+        <div id="download_info" style="display: none">
+            <span id="file_size"></span>
+            <span id="download_finish" style="margin-left: 15%; display: none">Download Finish</span> <span
+                id="download_check" class="fa fa-check" style="margin-left: 3%; display: none;"></span>
+        </div>
+    </div>
+
+    <div class="containe" style="text-align: center;">
+        <button type="submit" class="btn" style="background-color: #123456; color: #FFFFFF" onclick="analyse()"><a
+                style="color: #FFFFFF" href="result.html">Analysis</a></button>
+    </div>
+
+    <div class="modal fade in" id="about" tabindex="-1" role="dialog" aria-labelledby="myModalLabel_about"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel_about">
+                        About
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    CRISPR gRNA design software created by G+FLAS LIFE SCIENCES.
+                    <br>
+                    Version: V0.2
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">
+                        OK
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+
+    <div class="modal fade in" id="help" tabindex="-1" role="dialog" aria-labelledby="myModalLabel_help"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel_help">
+                        Help
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <p>Online document<a style="color: #027BFF; cursor:pointer;" href="Tutorial.html">Tutorial.html</a> </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">
+                        OK
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+
+    <div class="modal fade in" id="issue" tabindex="-1" role="dialog" aria-labelledby="myModalLabel_issue"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel_issue">
+                        Report
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    If you have any issue and advice,please connect leek0502@gmail.com
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">
+                        OK
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <script src="" async defer></script>
+</body>
+
+<script>
+    window.$ = window.jQuery = require('jquery');
+</script>
+<script src="statics/js/main.js"></script>
+<script src="statics/popper.min.js"></script>
+<script src="statics/js/bootstrap.min.js"></script>
+
+
+<script>
+    $(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();   
+});
+</script>
+
+</html>
