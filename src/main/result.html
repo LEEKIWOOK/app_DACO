@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html class="no-js">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>GFLAS CRISPR gRNA scoring tools</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="../../statics/css/bootstrap.css">
+        <link rel="stylesheet" href="../../statics/font-awesome-4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="../../statics/css/style.css">
+
+		<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+		<script src="../../statics/js/jquery-3.4.1.min.js"></script>
+		<script>if (window.module) module = window.module;</script>
+
+        <script type="text/javascript" src="../../statics/js/popper.min.js"></script>
+        <script type="text/javascript" src="../../statics/js/bootstrap.min.js"></script>
+
+        <script>
+            $(document).ready(function(){
+                $('[data-toggle="tooltip"]').tooltip();   
+            });
+        </script>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #123456">
+            <a class="navbar-brand" href="#">G+FLAS LIFE SCIENCES : CRISPR gRNA Design Tool</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item" style="margin-left: 1000px">
+                        <a class="nav-link" data-toggle="modal" data-target="#about" id="navbarDropdownMenuLink1" style="cursor:pointer;">About</a>
+                    </li>
+                    <li class="nav-item" style="margin-left: 10px">
+                        <a class="nav-link" data-toggle="modal" data-target="#help" id="navbarDropdownMenuLink2" style="cursor:pointer;">Help</a>
+                    </li>
+                    <li class="nav-item" style="margin-left: 10px">
+                        <a class="nav-link" data-toggle="modal" data-target="#issue" id="navbarDropdownMenuLink3" style="cursor:pointer;">Report</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <div class="container file-type" style="text-align: center">
+            <div class="row">
+                <div class="col border-radius" style="padding: 4px">
+                    <a id="fasta_option" style="color: #c3325f; cursor:pointer;"><span class="fa fa-file-text"></span>Results</a>  
+                </div>
+            </div>
+        </div>
+
+        <div class="container file-type" style="text-align: center">
+            <div class="row">
+                <p><strong>Note:</strong>Score:on-target efficiency.</p>
+            </div>
+            <div class="row">
+                                
+                <div data-include-path="../../data/grna_results.html"></div>
+                <script>
+                     window.addEventListener('load', function() {
+                        var allElements = document.getElementsByTagName('*');
+                        Array.prototype.forEach.call(allElements, function(el) {
+                            var includePath = el.dataset.includePath;
+                            if (includePath) {
+                                var xhttp = new XMLHttpRequest();
+                                xhttp.onreadystatechange = function () {
+                                    if (this.readyState == 4 && this.status == 200) {
+                                        el.outerHTML = this.responseText;
+                                    }
+                                };
+                                xhttp.open('GET', includePath, true);
+                                xhttp.send();
+                            }
+                        });
+                    });
+                </script>
+            </div>  
+        </div>
+
+
+        <div class="modal fade in" id="about" tabindex="-1" role="dialog" aria-labelledby="myModalLabel_about" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            &times;
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel_about">
+                            About
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        CRISPR gRNA design software created by G+FLAS LIFE SCIENCES.
+                        <br>
+                        Version: V0.2
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">
+                            OK
+                        </button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+        </div>
+
+
+        <div class="modal fade in" id="help" tabindex="-1" role="dialog" aria-labelledby="myModalLabel_help"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            &times;
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel_help">
+                            Help
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Online document<a style="color: #027BFF; cursor:pointer;" href="Tutorial">Tutorial</a> </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">
+                            OK
+                        </button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+        </div>
+
+
+        <div class="modal fade in" id="issue" tabindex="-1" role="dialog" aria-labelledby="myModalLabel_issue"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            &times;
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel_issue">
+                            Report
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        If you have any issue and advice,please connect leek0502@gmail.com
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">
+                            OK
+                        </button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+        </div>       
+    </body>
+</html>

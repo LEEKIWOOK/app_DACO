@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html class="no-js">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>GFLAS CRISPR gRNA scoring tools</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="./statics/css/bootstrap.css">
+        <link rel="stylesheet" href="./statics/font-awesome-4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="./statics/css/style.css">
+
+		<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+		<script src="./statics/js/jquery-3.4.1.min.js"></script>
+		<script>if (window.module) module = window.module;</script>
+
+        <script type="text/javascript" src="./statics/js/popper.min.js"></script>
+        <script type="text/javascript" src="./statics/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="./src/main/index.js"></script>
+
+        <script>
+            $(document).ready(function(){
+                $('[data-toggle="tooltip"]').tooltip();   
+        });
+        </script>
+    </head>
+
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #123456">
+            <a class="navbar-brand" href="#">G+FLAS LIFE SCIENCES : CRISPR gRNA Design Tool</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+    
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item" style="margin-left: 1000px">
+                        <a class="nav-link" data-toggle="modal" data-target="#about" id="navbarDropdownMenuLink1" style="cursor:pointer;">About</a>
+                    </li>
+                    <li class="nav-item" style="margin-left: 10px">
+                        <a class="nav-link" data-toggle="modal" data-target="#help" id="navbarDropdownMenuLink2" style="cursor:pointer;">Help</a>
+                    </li>
+                    <li class="nav-item" style="margin-left: 10px">
+                        <a class="nav-link" data-toggle="modal" data-target="#issue" id="navbarDropdownMenuLink3" style="cursor:pointer;">Report</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <div class="container-fluid row title">
+            <div class="col border-radius" style="text-align: center">
+                <a href="#"><strong>Select load file type</strong></a>
+            </div>
+            <canvas id="myCanvas1"></canvas>
+        </div>
+
+        <div class="container file-type" style="text-align: center">
+            <div class="row">
+                <div class="col border-radius" style="padding: 4px">
+                    <a id="fasta_option" style="color: #c3325f; cursor:pointer;"><span class="fa fa-file-text"></span>Fasta(sequence)</a>
+                </div>
+            </div>
+        </div>
+
+        <!--fasta_content-->
+        <div class="container" id="fasta_content" style=" padding: 15px 15px">
+
+            <div style="margin-top: 10px">
+                <p><strong>Note:</strong>Enter DNA FASTA files or sequences.</p>
+                <label><strong>Enter DNA sequences or FASTA file</strong></label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">DNA Sequence</span>
+                    </div>
+                    <!-- disbled -->
+                    <textarea disabled class="form-control" aria-label="With textarea" id="dna_sequence" rows="4" name="QUERY"
+                        onkeyup="value = value.replace(/(>.+\n)/g,'').replace(/[^ATCGatcg]/g,'')"></textarea>
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">or, upload file</span>
+                    </div>
+                    <div class="custom-file">
+                        <label class="custom-file-label" id="dna_file_label" for="dna_file">DNA Fasta file</label>
+                        <input class="custom-file-input" id="dna_file" type="file" style="display: inline" onchange="read_dna_fa()" />
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="container-fluid row title">
+            <div class="col border-radius" style="text-align: center">
+                <a href="#"><strong>Edit System option</strong></a>
+            </div>
+            <canvas id="myCanvas2"></canvas>
+        </div>
+
+
+        <div class="container" id="edit_content" style=" padding: 15px 15px">
+
+            <div class="input-group mb-3" style="margin-top: 10px">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="Cas_protein">CRISPR-Cas protein<span  class="fa fa-question-circle-o" style="color: #027BFF; padding-left: 5px; cursor:pointer" data-toggle="tooltip" data-html="true" title="Select the 'CRISPR/Cas9 or CRISPR/Cas12a'. Once selected, the parameters 'PAM' and gRNA length will be filled in automatically, not required."></span></label>
+                </div>
+                <select class="custom-select" id="Cas_protein" onchange="change_Cas_protein()">
+                    <option value="spCas9(NGG)" selected>spCas9(NGG)</option>
+                    <option value="AsCas12a(TTTN)">AsCas12a(TTTN)</option>
+                </select>
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="offtarget">Select reference genome<span  class="fa fa-question-circle-o" style="color: #027BFF; padding-left: 5px; cursor:pointer" data-toggle="tooltip" data-html="true" title="Select reference genome."></span></label>
+                </div>
+                <select class="custom-select" id="offtarget">
+                    <option value="nb101">Nicotiana benthamiana (SolGenomics v1.01)</option>
+                    <option value="hg38" selected>Homo sapiens (GRCh38)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="containe" style="text-align: center;">
+            <button type="submit" class="btn" style="background-color: #123456; color: #FFFFFF" onclick="analyse()"><a
+                    style="color: #FFFFFF" href="./src/main/result.html">Analysis</a></button>
+        </div>
+
+        <div class="modal fade in" id="about" tabindex="-1" role="dialog" aria-labelledby="myModalLabel_about"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            &times;
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel_about">
+                            About
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        CRISPR gRNA design software created by G+FLAS LIFE SCIENCES.
+                        <br>
+                        Version: V0.2
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">
+                            OK
+                        </button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+        </div>
+
+
+        <div class="modal fade in" id="help" tabindex="-1" role="dialog" aria-labelledby="myModalLabel_help"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            &times;
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel_help">
+                            Help
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Online document<a style="color: #027BFF; cursor:pointer;" href="Tutorial">Tutorial</a> </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">
+                            OK
+                        </button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+        </div>
+
+
+        <div class="modal fade in" id="issue" tabindex="-1" role="dialog" aria-labelledby="myModalLabel_issue"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            &times;
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel_issue">
+                            Report
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        If you have any issue and advice,please connect leek0502@gmail.com
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">
+                            OK
+                        </button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+        </div>
+    </body>
+</html>
