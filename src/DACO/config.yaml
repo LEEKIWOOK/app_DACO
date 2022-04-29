@@ -1,0 +1,8 @@
+DATABASE:
+ outdir: /home/kwlee/Projects_gflas/GFLAS_webserver/results
+ root: /home/kwlee/Projects_gflas/GFLAS_webserver/database
+ valid: experiments/validated/hg_guide_info.csv
+ ref: reference/hg38/hg38-p13.fa
+ ensembl: reference/ensembl/Homo_sapiens.GRCh38.105.gtf
+ kovar: polymorphism/KoVariome
+ dbsnp: polymorphism/dbsnp/freq.vcf.gz
